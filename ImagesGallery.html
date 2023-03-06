@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Images Gallery</title>
+    <style>
+        html,body{
+            height: 100%;
+            margin: 0;
+        }
+        .project-container{
+            text-align: center;
+            background-color: #3f51b5;
+            width: 100%;
+            min-height: 100%;
+            display: inline-block;
+            font-family: 'Roboto', sans-serif;
+        }
+        .project-container h1{
+            margin: 50px;
+            color: #fff;
+        }
+
+        #images-container{
+            margin-top: 50px;
+        }
+
+        #images-container img{
+            width: 200px;
+            min-width: 200px;
+            min-height: 100px;
+            margin: 5px;
+            border: 1px solid #fff;
+            border-radius: 5px;
+            background: #fff;
+        }
+        input[type=file]{
+            width: 350px;
+            max-width: 100%;
+            color: #444;
+            padding: 5px;
+            background: #fff;
+            border: 1px solid #555;
+            border-radius: 10px;
+        }
+        input[type=file]::file-selector-button {
+            margin-right: 20px;
+            border: none;
+            background: #084cdf;
+            padding: 10px 20px;
+            border-radius: 10px;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.2s ease-in-out;
+        }
+
+        input[type=file]::file-selector-button:hover {
+            background: #0d45a5;
+        }
+
+        #perview-image{
+            max-width: 100%;
+            max-height: 100%;
+            position: absolute;
+            right: 0;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            margin: auto;
+        }
+
+        #perview-image-container{
+            position: fixed;
+            background: rgba(0,0,0,0.9);
+            right: 0;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            height: 100vh;
+            display: none;
+        }
+
+        .close-btn{
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #fff;
+            border-radius: 100%;
+            background: #313131;
+            padding: 5px 14px 5px 10px;
+        }
+        .fa-angle-left, .fa-angle-right{
+            font-size: 60px;
+            position: absolute;
+            color: #fff;
+            top: 50%;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .fa-angle-left{
+            left: 0;
+        }
+        .fa-angle-right{
+            right: 0;
+        }
+        .disable{
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="project-container">
+        <h1>Images gallery project by Elsehrawy Channel</h1>
+        <input type="file" accept="image/*" multiple onchange="getFiles()">
+        <div id="images-container"></div>
+
+        <div id="perview-image-container">
+            <i class="close-btn" onclick="closeImage()">X</i>
+            <i id="angle-left" class="fa fa-angle-left" onclick="getNextOrPerviousImage('previous')"></i>
+            <img id="perview-image">
+            <i id="angle-right" class="fa fa-angle-right" onclick="getNextOrPerviousImage('next')"></i>
+        </div>
+    </div>
+</body>
+</html>
+<script>
+    var selectedImage = null;
+    function getFiles(){
+        const files = event.target.files;
+        for(var i=0; i < files.length;i++){
+            var newImage = document.createElement("img");
+            setImagePath(newImage,files[i], i);
+            document.getElementById("images-container").appendChild(newImage);
+        }
+    }
+
+    function setImagePath(image,file, index){
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function(){
+            image.setAttribute("src",reader.result);
+            image.onclick = function(e){
+                selectedImage = e.target;
+                disableArrows();
+                openImage(reader.result)
+            }
+        }
+    }
+
+    function openImage(result, index){
+        document.getElementById("perview-image-container").style.display = 'block';
+        document.getElementById("perview-image").setAttribute('src',result)
+    }
+
+    function closeImage(){
+        document.getElementById("perview-image-container").style.display = 'none';
+    }
+
+    function getNextOrPerviousImage(goTo){
+        if(!selectedImage ||  
+        (goTo === 'next' && !selectedImage.nextSibling) ||
+        (goTo === 'previous' && !selectedImage.previousSibling)) return;
+        document.querySelector('.disable')?.classList.remove('disable')
+        selectedImage = goTo === 'next'? selectedImage.nextSibling :selectedImage.previousSibling;
+        const imageSrc = selectedImage.getAttribute('src')
+        document.getElementById("perview-image").setAttribute('src',imageSrc);
+        disableArrows();
+    }
+
+    function disableArrows(){
+        if(!selectedImage || !selectedImage.previousSibling) {
+            document.getElementById("angle-left").classList.add('disable');
+        }
+
+        if(!selectedImage || !selectedImage.nextSibling) {
+            document.getElementById("angle-right").classList.add('disable');
+        }
+    }
+</script>

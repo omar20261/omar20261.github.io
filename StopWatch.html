@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stop Watch</title>
+    <style>
+        .project-container{
+            text-align: center;
+            font-family: 'Roboto', sans-serif;
+        }
+        .stop-watch-container{
+            width: 500px;
+            margin: auto;
+            position: relative;
+        }
+        #stop-watch-screen{
+            position: absolute;
+            width: 206px;
+            height: 97px;
+            background: #a5b79d;
+            left: 0;
+            right: 0;
+            margin: auto;
+            top: 34%;
+            border-radius: 5px;
+            font-size: 50px;
+            display: flex;
+            align-items: center;
+        }
+        .stop-watch-btns button{
+            border: none;
+            padding: 15px 30px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 10px;
+            margin: 0 10px;
+            color: white;
+        }
+
+        .stop-watch-btns button:nth-child(1){  background-color: #f44336;  } /* stop */
+        .stop-watch-btns button:nth-child(2){  background-color: #008CBA;  } /* Start */
+        .stop-watch-btns button:nth-child(3){  background-color: #555555;  } /* Reset */
+        .ms-num{
+            width: 50px;
+            font-size: 25px;
+        }
+        .min-sec-num{
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="project-container">
+        <h1>Stop Watch By Elsehrawy Channel</h1>
+        <div class="stop-watch-container">
+            <div id="stop-watch-screen"></div>
+            <img width="100%" src="./stop-watch-image.jpg">
+        </div>
+        <div class="stop-watch-btns">
+            <button onclick="stop()">Stop</button>
+            <button onclick="start()">Start</button>
+            <button onclick="reset()">Reset</button>
+        </div>
+    </div>
+</body>
+</html>
+
+<script>
+    var min_time = 0, sec_time = 0, ms_time = 0, interval;
+    function start() {
+
+        stop();
+
+        interval = setInterval(()=>{
+            ms_time += 10;
+
+            if(ms_time === 1000){
+                ms_time = 0;
+                sec_time += 1;
+            }
+
+            if(sec_time === 60){
+                sec_time = 0;
+                min_time += 1;
+            }
+
+            printOnScreen();
+        },10);
+    }
+
+    function stop() {
+        if(interval){
+            clearInterval(interval);
+            interval = null;
+        }
+    }
+
+    function reset() {
+        stop();
+        ms_time = 0;
+        sec_time = 0;
+        min_time = 0;
+        interval = null;
+        printOnScreen();
+    }
+
+    function printOnScreen() {
+        var ms_num = '<span class="ms-num">' + twoDigit(ms_time) + '</span>';
+        var min_sec_num = '<span class="min-sec-num">' +  twoDigit(min_time) + ":" + twoDigit(sec_time) + '.</span>';
+
+        document.getElementById("stop-watch-screen").innerHTML =  min_sec_num + ms_num
+    }
+
+    function twoDigit(num) {
+        return num <= 9 ? '0' + num : num
+    }
+
+    printOnScreen();
+</script>
