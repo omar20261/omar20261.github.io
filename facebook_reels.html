@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook Reels</title>
+    <style>
+        html,body{
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+        .video-container{
+            max-width: 100%;
+            height: 100%;
+            text-align: center;
+            scroll-snap-align: start;
+        }
+        video{
+            max-width: 100%;
+            max-height: 100%;
+        }
+        #scroller{
+            height: 100%;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+        }
+    </style>
+</head>
+<body>
+    <div id="scroller">
+        <!--<div class="video-container">
+            <video id="video" loop controls
+            src="https://drive.google.com/uc?export=download&id=1s3woZlUUB9mD6UYr_BwoolZMgutTrLLX"></video>
+        </div> !-->
+    </div>
+
+</body>
+</html>
+<script>
+    var videosList = [
+        '1s3woZlUUB9mD6UYr_BwoolZMgutTrLLX',
+        '1KckJty1NC9PJUQmdoD97IENWgPlqF5Pk',
+        '1G___Q3-Eau26kmM-f9tfI99bE7sVM3XL'
+    ];
+
+    function displayVideos(){
+        videosList.forEach((videoId)=>{
+            createVideo(videoId)
+        })
+    }
+
+    displayVideos();
+
+    function createVideo(id){
+        let video = document.createElement("video");
+        video.src = 'https://drive.google.com/uc?export=download&id=' + id;
+        video.loop = true;
+        video.controls = true;
+
+        let videoContainer = document.createElement("div");
+        videoContainer.classList.add("video-container");
+
+        videoContainer.appendChild(video);
+
+        document.getElementById('scroller').appendChild(videoContainer)
+    }
+
+    document.getElementById("scroller").addEventListener("scroll", function(){
+        const targetVideo = document.elementFromPoint(window.innerWidth/2, window.innerHeight/2);
+        const playingVideos = document.querySelectorAll('video[isPlaying="true"]')
+
+        if (playingVideos && playingVideos.length) {
+            playingVideos.forEach(elm=>{
+                elm.setAttribute('isPlaying','false');
+                elm.pause()
+            })
+        }
+
+        if(targetVideo){
+            targetVideo.play();
+            targetVideo.setAttribute('isPlaying','true');
+        }
+
+    })
+</script>
