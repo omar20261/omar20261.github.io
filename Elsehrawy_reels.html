@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elsehrawy Reels</title>
+    <style>
+        html,body{
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            background: #2d2d2d;
+        }
+        .project-title {
+            position: absolute;
+            margin: 25px;
+            color: #fff;
+            font-family: 'Roboto', sans-serif;
+
+        }
+        .video-container{
+            max-width: 100%;
+            height: 100vh;
+            text-align: center;
+            scroll-snap-align: start;
+        }
+        video{
+            max-width: 100%;
+            height: 100%;
+        }
+
+        #scoller{
+            height: 100%;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="project-title">Elsehrawy Reels</h1>
+    <div id="scoller"></div>
+</body>
+</html>
+
+<script>
+    var videosIds=[]
+
+    function getVideos(){
+        const API_link = 'https://www.googleapis.com/drive/v3/files';
+       const key = 'AIzaSyD2KZyp727GCPrPd-l8oeh1K78WKA2fxRc';
+       const query = '"1BH9ifcq1NMCjaNsW8257KZce39H6m2zZ" in parents AND mimeType = "video/mp4"'
+       const link = API_link + '?key=' + key + '&q=' + query;
+       fetch(link,{ method:"get"})
+       .then(res=>{ return res.json() })
+       .then(JsonData=>{
+        videosIds = JsonData.files.map(file=>file.id)
+        createAllVideos();
+    })
+    }
+
+    getVideos();
+
+    function createAllVideos(){
+        videosIds.forEach((videoId)=>{
+            createVideo(videoId);
+        })
+    }
+
+    function createVideo(videoId){
+        let video = document.createElement('video');
+        video.src = 'https://drive.google.com/uc?export=download&id=' + videoId;
+        video.loop = true;
+        video.controls = true;
+
+        let videoContainer = document.createElement('div');
+        videoContainer.classList.add('video-container');
+        videoContainer.appendChild(video)
+
+        document.getElementById('scoller').appendChild(videoContainer)
+    }
+
+    document.getElementById("scoller").addEventListener('scroll',function(){
+        const targetVideo = document.elementFromPoint(window.innerWidth/2,window.innerHeight/2,)
+        const playingVideos = document.querySelectorAll('video[isPlaying="true"]')
+
+        if(playingVideos && playingVideos.length > 0){
+            playingVideos.forEach((elm)=>{
+                targetVideo.setAttribute('isPlaying','false')
+                elm.pause();
+            })
+        }
+
+        if(targetVideo){
+            targetVideo.play();
+            targetVideo.setAttribute('isPlaying','true')
+        }
+    })
+
+</script>
